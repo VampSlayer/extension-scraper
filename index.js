@@ -18,23 +18,24 @@ app.get("/", async function (req, res) {
 })
 
 app.listen(PORT)
-console.log("running @ localhost:3000")
+console.log(`running @ localhost:${PORT}`)
 
 async function getExtensionVersions() {
-	const chrome = await getCurrentChromeVersion()
-	const firefox = await getCurrentFirefoxVersion()
-	const edge = await getCurrentEdgeVersion()
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'] }) // heroku build pack fix
+	const chrome = await getCurrentChromeVersion(browser)
+	const firefox = await getCurrentFirefoxVersion(browser)
+	const edge = await getCurrentEdgeVersion(browser)
 	const versions = {
 		date: Date.now(),
 		chrome: chrome,
 		firefox: firefox,
 		edge: edge,
 	}
+	await browser.close()
 	return versions
 }
 
-async function getCurrentChromeVersion() {
-	const browser = await puppeteer.launch()
+async function getCurrentChromeVersion(browser) {
 	const page = await browser.newPage()
 	await page.goto(
 		"https://chrome.google.com/webstore/detail/momentum/laookkfknpbbblfpciffpaejjkokdgca"
@@ -46,12 +47,10 @@ async function getCurrentChromeVersion() {
 		return version_span.innerHTML
 	})
 
-	await browser.close()
 	return version
 }
 
-async function getCurrentFirefoxVersion() {
-	const browser = await puppeteer.launch()
+async function getCurrentFirefoxVersion(browser) {
 	const page = await browser.newPage()
 	await page.goto(
 		"https://addons.mozilla.org/en-CA/firefox/addon/momentumdash/"
@@ -66,12 +65,10 @@ async function getCurrentFirefoxVersion() {
 		return version_span.innerHTML
 	})
 
-	await browser.close()
 	return version
 }
 
-async function getCurrentEdgeVersion() {
-	const browser = await puppeteer.launch()
+async function getCurrentEdgeVersion(browser) {
 	const page = await browser.newPage()
 	await page.goto(
 		"https://microsoftedge.microsoft.com/addons/detail/momentum/jdoanlopeanabgejgmdncljhkdplcfed"
@@ -84,6 +81,5 @@ async function getCurrentEdgeVersion() {
 		return version_span.innerHTML
 	})
 
-	await browser.close()
 	return version
 }
