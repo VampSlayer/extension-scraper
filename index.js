@@ -4,19 +4,20 @@ const NodeCache = require("node-cache")
 
 const versionCache = new NodeCache()
 const app = express()
+const PORT = process.env.PORT || 3000;
 
 app.get("/", async function (req, res) {
 	const versionCacheKey = "momo-ext-versions"
 	let versions = versionCache.get(versionCacheKey)
 	if (versions === undefined) {
 		versions = await getExtensionVersions()
-		const succces = versionCache.set(versionCacheKey, versions, 900) // 15 minutes
+		const succces = versionCache.set(versionCacheKey, versions, 1800) // 30 minutes
 		versions.cached = succces
 	}
 	res.send(versions)
 })
 
-app.listen(3000)
+app.listen(PORT)
 console.log("running @ localhost:3000")
 
 async function getExtensionVersions() {
