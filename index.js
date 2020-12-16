@@ -30,21 +30,21 @@ async function getExtensionVersions() {
 		chrome = await getCurrentChromeVersion(browser)
 	} catch (error) {
 		console.error(error)
-		chrome = error
+		chrome = 'error'
 	}
 
 	try {
 		firefox = await getCurrentFirefoxVersion(browser)
 	} catch (error) {
 		console.error(error)
-		firefox = error
+		firefox = 'error'
 	}
 
 	try {
 		edge = await getCurrentEdgeVersion(browser)
 	} catch (error) {
 		console.error(error)
-		edge = error
+		edge = 'error'
 	}
 	
 	const versions = {
@@ -69,7 +69,13 @@ async function getCurrentChromeVersion(browser) {
 		return version_span.innerHTML
 	})
 
-	return version
+	await page.waitFor(".h-C-b-p-D-xh-hh")
+	const lastUpdated = await page.evaluate(() => {
+		const last_update_span = document.getElementsByClassName("h-C-b-p-D-xh-hh")[0]
+		return last_update_span.innerHTML
+	})
+
+	return { version, lastUpdated }
 }
 
 async function getCurrentFirefoxVersion(browser) {
@@ -79,7 +85,6 @@ async function getCurrentFirefoxVersion(browser) {
 	)
 
 	await page.waitFor(".AddonMoreInfo-version")
-
 	const version = await page.evaluate(() => {
 		const version_span = document.getElementsByClassName(
 			"AddonMoreInfo-version"
@@ -87,7 +92,16 @@ async function getCurrentFirefoxVersion(browser) {
 		return version_span.innerHTML
 	})
 
-	return version
+	await page.waitFor(".AddonMoreInfo-last-updated")
+	const lastUpdated = await page.evaluate(() => {
+		const last_updated = document.getElementsByClassName(
+			"AddonMoreInfo-last-updated"
+		)[0]
+		const inner_html = last_updated.innerHTML
+		return inner_html.substring(inner_html.lastIndexOf("(") + 1, inner_html.lastIndexOf(")"))
+	})
+
+	return { version, lastUpdated }
 }
 
 async function getCurrentEdgeVersion(browser) {
@@ -97,11 +111,17 @@ async function getCurrentEdgeVersion(browser) {
 	)
 
 	await page.waitForSelector("#versionLabel")
-
 	const version = await page.evaluate(() => {
 		const version_span = document.getElementById("versionLabel")
 		return version_span.innerHTML.split(' ')[1]
 	})
 
-	return version
+	await page.waitForSelector("#lastUpdatedOnHeader")
+	const lastUpdated = await page.evaluate(() => {
+		const last_updated = document.getElementById("lastUpdatedOnHeader")
+		const last_updated_split = last_updated.innerHTML.split(' ')
+		return `${last_updated_split[1]} ${last_updated_split[2]} ${last_updated_split[3]}`
+	})
+
+	return { version, lastUpdated }
 }
