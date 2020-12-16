@@ -46,9 +46,12 @@ async function getExtensionVersions() {
 		console.error(error)
 		edge = 'error'
 	}
+
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const today = new Date()
 	
 	const versions = {
-		date: new Date().toISOString(),
+		date: `${months[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`,
 		chrome: chrome,
 		firefox: firefox,
 		edge: edge,
