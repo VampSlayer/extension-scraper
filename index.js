@@ -22,11 +22,33 @@ console.log(`running @ localhost:${PORT}`)
 
 async function getExtensionVersions() {
 	const browser = await puppeteer.launch({ args: ['--no-sandbox'] }) // heroku build pack fix
-	const chrome = await getCurrentChromeVersion(browser)
-	const firefox = await getCurrentFirefoxVersion(browser)
-	const edge = await getCurrentEdgeVersion(browser)
+	let chrome
+	let firefox
+	let edge
+
+	try {
+		chrome = await getCurrentChromeVersion(browser)
+	} catch (error) {
+		console.error(error)
+		chrome = error
+	}
+
+	try {
+		firefox = await getCurrentFirefoxVersion(browser)
+	} catch (error) {
+		console.error(error)
+		firefox = error
+	}
+
+	try {
+		edge = await getCurrentEdgeVersion(browser)
+	} catch (error) {
+		console.error(error)
+		edge = error
+	}
+	
 	const versions = {
-		date: Date.now(),
+		date: new Date().toISOString(),
 		chrome: chrome,
 		firefox: firefox,
 		edge: edge,
@@ -74,11 +96,11 @@ async function getCurrentEdgeVersion(browser) {
 		"https://microsoftedge.microsoft.com/addons/detail/momentum/jdoanlopeanabgejgmdncljhkdplcfed"
 	)
 
-	await page.waitForSelector("#versionText")
+	await page.waitForSelector("#versionLabel")
 
 	const version = await page.evaluate(() => {
-		const version_span = document.getElementById("versionText")
-		return version_span.innerHTML
+		const version_span = document.getElementById("versionLabel")
+		return version_span.innerHTML.split(' ')[1]
 	})
 
 	return version
