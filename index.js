@@ -25,6 +25,7 @@ async function getExtensionVersions() {
 	let chrome
 	let firefox
 	let edge
+	let safari
 
 	try {
 		chrome = await getCurrentChromeVersion(browser)
@@ -47,6 +48,13 @@ async function getExtensionVersions() {
 		edge = 'error'
 	}
 
+	try {
+		safari = await getCurrentSafariVersion(browser)
+	} catch (error) {
+		console.error(error)
+		safari = 'error'
+	}
+
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	const today = new Date()
 	
@@ -55,6 +63,7 @@ async function getExtensionVersions() {
 		chrome: chrome,
 		firefox: firefox,
 		edge: edge,
+		safari: safari
 	}
 	await browser.close()
 	return versions
@@ -127,4 +136,18 @@ async function getCurrentEdgeVersion(browser) {
 	})
 
 	return { version, lastUpdated }
+}
+
+async function getCurrentSafariVersion(browser) {
+	const page = await browser.newPage()
+	await page.goto(
+		"https://apps.apple.com/ca/app/momentum/id1564329434"
+	)
+
+	const version = await page.evaluate(() => {
+		const version_p = document.getElementsByClassName("whats-new__latest__version")[0]
+		return version_p.innerHTML.split(" ")[1]
+	})
+
+	return { version }
 }
