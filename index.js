@@ -55,7 +55,7 @@ async function getExtensionVersions() {
 		safari = 'error'
 	}
 
-	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	const today = new Date()
 	
 	const versions = {
@@ -132,7 +132,7 @@ async function getCurrentEdgeVersion(browser) {
 	const lastUpdated = await page.evaluate(() => {
 		const last_updated = document.getElementById("lastUpdatedOnHeader")
 		const last_updated_split = last_updated.innerHTML.split(' ')
-		return `${last_updated_split[1]} ${last_updated_split[2]} ${last_updated_split[3]}`
+		return `${last_updated_split[1].substring(0, 3)} ${last_updated_split[2]} ${last_updated_split[3]}`
 	})
 
 	return { version, lastUpdated }
@@ -149,5 +149,9 @@ async function getCurrentSafariVersion(browser) {
 		return version_p.innerHTML.split(" ")[1]
 	})
 
-	return { version }
+	const lastUpdated = await page.evaluate(() => {
+		return document.querySelectorAll("[data-test-we-datetime]")[0].innerText.replace('.', '')
+	})
+
+	return { version, lastUpdated }
 }
