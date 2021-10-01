@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer")
+const timeago = require("timeago.js")
 const express = require("express")
 const NodeCache = require("node-cache")
 
@@ -87,7 +88,9 @@ async function getCurrentChromeVersion(browser) {
 		return last_update_span.innerHTML
 	})
 
-	return { version, lastUpdated }
+	const timeAgo = timeago.format(lastUpdated)
+
+	return { version, lastUpdated, timeAgo }
 }
 
 async function getCurrentFirefoxVersion(browser) {
@@ -113,7 +116,9 @@ async function getCurrentFirefoxVersion(browser) {
 		return inner_html.substring(inner_html.lastIndexOf("(") + 1, inner_html.lastIndexOf(")"))
 	})
 
-	return { version, lastUpdated }
+	const timeAgo = timeago.format(lastUpdated)
+
+	return { version, lastUpdated, timeAgo }
 }
 
 async function getCurrentEdgeVersion(browser) {
@@ -135,7 +140,9 @@ async function getCurrentEdgeVersion(browser) {
 		return `${last_updated_split[1].substring(0, 3)} ${last_updated_split[2]} ${last_updated_split[3]}`
 	})
 
-	return { version, lastUpdated }
+	const timeAgo = timeago.format(lastUpdated)
+
+	return { version, lastUpdated, timeAgo }
 }
 
 async function getCurrentSafariVersion(browser) {
@@ -153,5 +160,7 @@ async function getCurrentSafariVersion(browser) {
 		return document.querySelectorAll("[data-test-we-datetime]")[0].innerText.replace('.', '')
 	})
 
-	return { version, lastUpdated }
+	const timeAgo = timeago.format(lastUpdated)
+
+	return { version, lastUpdated, timeAgo }
 }

@@ -1,11 +1,10 @@
 {
   "name": "version-scraper",
   "version": "1.0.0",
-  "description": "scrape momentum extension web version",
+  "description": "scrape momentum extension web versions",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "keywords": [
     "version",
@@ -13,12 +12,13 @@
     "momentum",
     "extension"
   ],
-  "author": "",
+  "author": "Sayam Hussain",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "node-cache": "^5.1.1",
     "nodemon": "^2.0.4",
-    "puppeteer": "^4.0.1"
+    "puppeteer": "^4.0.1",
+    "timeago.js": "^4.0.2"
   }
 }
