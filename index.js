@@ -5,7 +5,7 @@ const NodeCache = require("node-cache")
 
 const versionCache = new NodeCache()
 const app = express()
-const PORT = process.env.PORT || 3000;
+const createHandler = require('azure-function-express').createHandler;
 
 app.get("/", async function (req, res) {
 	const versionCacheKey = "momo-ext-versions"
@@ -18,8 +18,11 @@ app.get("/", async function (req, res) {
 	res.send(versions)
 })
 
-app.listen(PORT)
-console.log(`running @ localhost:${PORT}`)
+module.exports = createHandler(app);
+
+//const PORT = process.env.PORT || 3000;
+//app.listen(PORT)
+//console.log(`running @ localhost:${PORT}`)
 
 async function getExtensionVersions() {
 	const browser = await puppeteer.launch({ args: ['--no-sandbox'] }) // heroku build pack fix
