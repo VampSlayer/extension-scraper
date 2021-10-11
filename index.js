@@ -7,7 +7,7 @@ const express = require("express")
 const app = express()
 const createHandler = require('azure-function-express').createHandler
 
-app.get("/", async function (req, res) {
+app.get("/api/versions", async function (req, res) {
 	// const versionCacheKey = "momo-ext-versions"
 	// let versions = versionCache.get(versionCacheKey)
 	// if (versions === undefined) {
@@ -15,6 +15,7 @@ app.get("/", async function (req, res) {
 	// 	const succces = versionCache.set(versionCacheKey, versions, 60 * 60) // 60 minutes
 	// 	versions.cached = succces
 	// }
+	req.context.log({ hello: 'world' });
 	res.send({success: 'success'})
 })
 
