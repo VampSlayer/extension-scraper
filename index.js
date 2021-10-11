@@ -1,21 +1,21 @@
-const puppeteer = require("puppeteer")
-const timeago = require("timeago.js")
+// const puppeteer = require("puppeteer")
+//const timeago = require("timeago.js")
 const express = require("express")
-const NodeCache = require("node-cache")
+// const NodeCache = require("node-cache")
 
-const versionCache = new NodeCache()
+//const versionCache = new NodeCache()
 const app = express()
-const createHandler = require('azure-function-express').createHandler;
+const createHandler = require('azure-function-express').createHandler
 
 app.get("/", async function (req, res) {
-	const versionCacheKey = "momo-ext-versions"
-	let versions = versionCache.get(versionCacheKey)
-	if (versions === undefined) {
-		versions = await getExtensionVersions()
-		const succces = versionCache.set(versionCacheKey, versions, 1800) // 30 minutes
-		versions.cached = succces
-	}
-	res.send(versions)
+	// const versionCacheKey = "momo-ext-versions"
+	// let versions = versionCache.get(versionCacheKey)
+	// if (versions === undefined) {
+	// 	versions = await getExtensionVersions()
+	// 	const succces = versionCache.set(versionCacheKey, versions, 60 * 60) // 60 minutes
+	// 	versions.cached = succces
+	// }
+	res.send({success: 'success'})
 })
 
 module.exports = createHandler(app);
@@ -25,7 +25,9 @@ module.exports = createHandler(app);
 //console.log(`running @ localhost:${PORT}`)
 
 async function getExtensionVersions() {
-	const browser = await puppeteer.launch({ args: ['--no-sandbox'] }) // heroku build pack fix
+	//const browser = await puppeteer.launch({ args: ['--no-sandbox'] }) // heroku build pack fix
+	const browser = await puppeteer.connect({ browserWSEndpoint: 'wss://chrome.browserless.io/' }) // azure functions fix
+
 	let chrome
 	let firefox
 	let edge
